@@ -1,9 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-def price_zcb_vasicek_mc(
-    a=0.1, b=0.05, sigma=0.02, r0=0.04,
-    T=5.0, dt=1/252, n_paths=20000, use_antithetic=True, random_seed=42
+def price_zcb_vasicek_mc_plot_paths(
+    a=0.0099, b=0.050269, sigma=0.015, r0=0.04,
+    T=5.0, dt=1/252, n_paths=20000, n_plot=20, use_antithetic=True, random_seed=42
 ):
     np.random.seed(random_seed)
 
@@ -36,7 +36,6 @@ def price_zcb_vasicek_mc(
     ci_low = price - 1.96 * std_error
     ci_high = price + 1.96 * std_error
 
-    # results
     print("Monte Carlo Vasicek ZCB Pricing")
     print("--------------------------------")
     print(f"Parameters: a={a}, b={b}, sigma={sigma}, r0={r0}, T={T}, dt={dt}")
@@ -45,7 +44,18 @@ def price_zcb_vasicek_mc(
     print(f"Standard error: {std_error:.6f}")
     print(f"95% CI: [{ci_low:.6f}, {ci_high:.6f}]")
 
-    # histogram
+    # Plot some short-rate paths
+    plt.figure(figsize=(12,6))
+    time_grid = np.linspace(0, T, n_steps + 1)
+    for i in range(min(n_plot, n_paths)):
+        plt.plot(time_grid, r[i, :], lw=1, alpha=0.7)
+    plt.title(f"Monte Carlo Vasicek Short-Rate Paths (first {n_plot} paths)")
+    plt.xlabel("Time (years)")
+    plt.ylabel("Short Rate")
+    plt.grid(True)
+    plt.show()
+
+    # histogram of discounted payoffs
     plt.figure(figsize=(10,5))
     plt.hist(discounts, bins=80, alpha=0.8)
     plt.title("Histogram of Discounted Payoffs (ZCB, face=1)")
@@ -54,10 +64,10 @@ def price_zcb_vasicek_mc(
     plt.grid(True)
     plt.show()
 
-    return {"price": price, "std_error": std_error, "ci": (ci_low, ci_high), "discounts": discounts}
+    return {"price": price, "std_error": std_error, "ci": (ci_low, ci_high), "discounts": discounts, "rates": r}
 
 # Example run
-res = price_zcb_vasicek_mc(
-    a=0.1, b=0.05, sigma=0.02, r0=0.04,
-    T=5.0, dt=1/252, n_paths=20000, use_antithetic=True, random_seed=42
+res = price_zcb_vasicek_mc_plot_paths(
+    a=0.0099, b=0.050269, sigma=0.015, r0=0.04,
+    T=5.0, dt=1/252, n_paths=20000, n_plot=20, use_antithetic=True, random_seed=42
 )
