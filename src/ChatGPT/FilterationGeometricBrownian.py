@@ -8,6 +8,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+
 # Parameters
 np.random.seed(42)
 T = 1.0         # Time horizon (1 year)
