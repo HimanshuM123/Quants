@@ -19,10 +19,14 @@ data['Lag1'] = data['Return'].shift(1) #shifts values in a Series (or DataFrame)
 print('Lag1',data['Lag1'])
 data['Lag2'] = data['Return'].shift(2)
 print('Lag2',data['Lag2'])
+#Lag1 → Yesterday’s return
+#Lag2 → Return from 2 days ago
 data['Volatility'] = data['Return'].rolling(5).std() #On Day 5, Volatility = std of returns from Day 1 to Day 5
 data['Direction'] = (data['Return'].shift(-1) > 0).astype(int)
 data.dropna(inplace=True)
 
+#hyperplane
+# w1*Lag1+w2*Lag2+w3*Volatility+b=0
 
 # Step 2: Feature matrix & target
 X = data[['Lag1', 'Lag2', 'Volatility']]
